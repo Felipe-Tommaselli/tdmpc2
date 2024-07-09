@@ -1,0 +1,111 @@
+{
+    "os": "Linux-6.5.0-41-generic-x86_64-with-glibc2.31",
+    "python": "3.9.0",
+    "heartbeatAt": "2024-07-09T05:34:25.416781",
+    "startedAt": "2024-07-09T05:34:25.095436",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "task=dog-run",
+        "steps=7000000"
+    ],
+    "state": "running",
+    "program": "/tdmpc2/tdmpc2/train.py",
+    "codePathLocal": null,
+    "codePath": "tdmpc2/train.py",
+    "git": {
+        "remote": "https://github.com/Felipe-Tommaselli/tdmpc2.git",
+        "commit": "5f6fadec0fec78304b4b53e8171d348b58cac486"
+    },
+    "email": null,
+    "root": "/tdmpc2",
+    "host": "47849918c2ba",
+    "username": "root",
+    "executable": "/opt/conda/bin/python3",
+    "cpu_count": 6,
+    "cpu_count_logical": 12,
+    "cpu_freq": {
+        "current": 3500.0019166666666,
+        "min": 800.0,
+        "max": 5000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3500.096,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3500.212,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.935,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.693,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3500.003,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.998,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3500.075,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.964,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3500.282,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.708,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3500.503,
+            "min": 800.0,
+            "max": 5000.0
+        },
+        {
+            "current": 3499.912,
+            "min": 800.0,
+            "max": 5000.0
+        }
+    ],
+    "disk": {
+        "/": {
+            "total": 778.0541915893555,
+            "used": 123.79674911499023
+        }
+    },
+    "gpu": "NVIDIA GeForce GTX 1650",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce GTX 1650",
+            "memory_total": 4294967296
+        }
+    ],
+    "memory": {
+        "total": 31.168941497802734
+    }
+}
