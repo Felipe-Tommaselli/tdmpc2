@@ -12,6 +12,7 @@ class PixelWrapper(gym.Wrapper):
 
 	def __init__(self, cfg, env, num_frames=3, render_size=64):
 		super().__init__(env)
+		print('PIXEL WRAPPER')
 		self.cfg = cfg
 		self.env = env
 		self.observation_space = gym.spaces.Box(

@@ -4,7 +4,7 @@ import gym
 import numpy as np
 import torch
 
-
+#! being used for dmcontrol
 class TensorWrapper(gym.Wrapper):
 	"""
 	Wrapper for converting numpy arrays to torch tensors.
@@ -12,6 +12,7 @@ class TensorWrapper(gym.Wrapper):
 
 	def __init__(self, env):
 		super().__init__(env)
+		print('TENSOR WRAPPER')
 	
 	def rand_act(self):
 		return torch.from_numpy(self.action_space.sample().astype(np.float32))

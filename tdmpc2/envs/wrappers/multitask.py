@@ -10,6 +10,7 @@ class MultitaskWrapper(gym.Wrapper):
 
 	def __init__(self, cfg, envs):
 		super().__init__(envs[0])
+		print('MULTITASK WRAPPER')
 		self.cfg = cfg
 		self.envs = envs
 		self._task = cfg.tasks[0]

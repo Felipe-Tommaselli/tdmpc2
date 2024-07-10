@@ -31,6 +31,7 @@ class TimeLimit(gym.Wrapper):
             max_episode_steps: An optional max episode steps (if ``Ǹone``, ``env.spec.max_episode_steps`` is used)
         """
         super().__init__(env)
+        print('TIME LIMIT WRAPPER')
         if max_episode_steps is None and self.env.spec is not None:
             max_episode_steps = env.spec.max_episode_steps
         if self.env.spec is not None:
