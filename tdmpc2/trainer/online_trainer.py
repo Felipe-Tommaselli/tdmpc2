@@ -99,8 +99,8 @@ class OnlineTrainer(Trainer):
 			else:
 				action = self.env.rand_act()
 			obs, reward, done, info = self.env.step(action)
-			print('obs:', obs)
-			print('action:', action)
+			print('obs:', obs.shape)
+			print('action:', action.shape)
 			print('reward:', reward)
 			print('done:', done)
 			self._tds.append(self.to_td(obs, action, reward))
