@@ -33,6 +33,7 @@ class ActionRepeatWrapper(dm_env.Environment):
 		self._env = env
 		self._num_repeats = num_repeats
 
+	#TODO: check
 	def step(self, action):
 		reward = 0.0
 		discount = 1.0
@@ -67,7 +68,8 @@ class ActionDTypeWrapper(dm_env.Environment):
 											   wrapped_action_spec.minimum,
 											   wrapped_action_spec.maximum,
 											   'action')
-
+	
+	#TODO: check
 	def step(self, action):
 		action = action.astype(self._env.action_spec().dtype)
 		return self._env.step(action)
@@ -92,7 +94,8 @@ class ExtendedTimeStepWrapper(dm_env.Environment):
 	def reset(self):
 		time_step = self._env.reset()
 		return self._augment_time_step(time_step)
-
+	
+	#TODO: check
 	def step(self, action):
 		time_step = self._env.step(action)
 		return self._augment_time_step(time_step, action)
@@ -162,12 +165,14 @@ class TimeStepToGymWrapper:
 		return None
 	
 	def _obs_to_array(self, obs):
+		#TODO: check this
 		return np.concatenate([v.flatten() for v in obs.values()])
 
 	def reset(self):
 		self.t = 0
 		return self._obs_to_array(self.env.reset().observation)
 	
+	#TODO: check
 	def step(self, action):
 		self.t += 1
 		time_step = self.env.step(action)
@@ -178,11 +183,13 @@ class TimeStepToGymWrapper:
 		return self.env.physics.render(height, width, camera_id)
 
 
+#! endpoint
 def make_env(cfg):
 	"""
 	Make DMControl environment.
 	Adapted from https://github.com/facebookresearch/drqv2
 	"""
+	print('MAKE ENV')
 	domain, task = cfg.task.replace('-', '_').split('_', 1)
 	domain = dict(cup='ball_in_cup', pointmass='point_mass').get(domain, domain)
 	if (domain, task) not in suite.ALL_TASKS:

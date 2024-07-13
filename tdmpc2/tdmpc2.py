@@ -84,6 +84,9 @@ class TDMPC2:
 		obs = obs.to(self.device, non_blocking=True).unsqueeze(0)
 		if task is not None:
 			task = torch.tensor([task], device=self.device)
+		#TODO: Check this 
+		# obs torch.Size([1, 223])
+		# z torch.Size([1, 512])
 		z = self.model.encode(obs, task)
 		if self.cfg.mpc:
 			a = self.plan(z, t0=t0, eval_mode=eval_mode, task=task)
