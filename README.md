@@ -39,6 +39,14 @@ If you prefer to install dependencies manually, start by installing dependencies
 ```
 conda env create -f docker/environment.yaml
 pip install gym==0.21.0
+
+# To activate this environment, use
+#
+#     $ conda activate tdmpc2
+#
+# To deactivate an active environment, use
+#
+#     $ conda deactivate
 ```
 
 The `environment.yaml` file installs dependencies required for training on DMControl tasks. Other domains can be installed by following the instructions in `environment.yaml`.
