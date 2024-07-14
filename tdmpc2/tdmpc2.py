@@ -16,6 +16,8 @@ class TDMPC2:
 
 	def __init__(self, cfg):
 		self.cfg = cfg
+		#TODO: check the action dim, might need to hard code it
+		print('>>> action dim: ', cfg.action_dim)
 		self.device = torch.device('cuda')
 		self.model = WorldModel(cfg).to(self.device)
 		self.optim = torch.optim.Adam([
@@ -87,6 +89,7 @@ class TDMPC2:
 		#TODO: Check this 
 		# obs torch.Size([1, 223])
 		# z torch.Size([1, 512])
+		# a=torch.Size([38]), type=<class 'torch.Tensor'>, min=-0.5549050569534302, max=0.555105447769165
 		z = self.model.encode(obs, task)
 		if self.cfg.mpc:
 			a = self.plan(z, t0=t0, eval_mode=eval_mode, task=task)

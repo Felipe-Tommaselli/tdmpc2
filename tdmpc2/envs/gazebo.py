@@ -158,6 +158,8 @@ class GazeboEnv:
 
     # Perform an action and read a new state
     def step(self, action):
+        #TODO: get the current action pair format from the agent
+        
         target = False
 
         # Publish the robot action
@@ -205,6 +207,8 @@ class GazeboEnv:
 
         #TODO: change info value when necessary 
         #self.info['success'] = 1.0 if self.odom_x > 1.0 else 0.0
+
+        #TODO: check obs values min and max
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())
@@ -269,3 +273,19 @@ class GazeboEnv:
             return -100.0
         else:
             return action[0]/2 - abs(action[1]) + delta_x/10
+
+##############################################
+
+#! endpoint
+def make_env(cfg):
+    """
+    Adapted from https://github.com/facebookresearch/drqv2
+    """
+    print('MAKE GAZEBO ENV')
+    env = GazeboEnv("multi_robot_scenario.launch")
+    # env = ActionDTypeWrapper(env, np.float32)
+    # env = ActionRepeatWrapper(env, 2)
+    # env = action_scale.Wrapper(env, minimum=-1., maximum=1.)
+    # env = ExtendedTimeStepWrapper(env)
+    # env = TimeStepToGymWrapper(env, domain, task)
+    return env
