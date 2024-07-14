@@ -6,6 +6,7 @@ from tensordict.tensordict import TensorDict
 
 from trainer.base import Trainer
 
+import colorful as cf 
 
 class OnlineTrainer(Trainer):
 	"""Trainer class for single-task online TD-MPC2 training."""
@@ -66,16 +67,16 @@ class OnlineTrainer(Trainer):
 
 	def train(self):
 		"""Train a TD-MPC2 agent."""
+		print('>> Starting online training...')
 		train_metrics, done, eval_next = {}, True, True
 		while self._step <= self.cfg.steps:
-
 			# Evaluate agent periodically
 			if self._step % self.cfg.eval_freq == 0:
 				eval_next = True
-
 			# Reset environment
 			if done:
 				if eval_next:
+					#* stuck here during training
 					eval_metrics = self.eval()
 					eval_metrics.update(self.common_metrics())
 					self.logger.log(eval_metrics, 'eval')
@@ -100,10 +101,13 @@ class OnlineTrainer(Trainer):
 			else:
 				action = self.env.rand_act()
 			obs, reward, done, info = self.env.step(action)
-			print('obs:', obs.shape)
-			print('action:', action.shape)
-			print('reward:', reward)
-			print('done:', done)
+			if info['success'] != 0.0:
+				print(cf.bold_red(f'[SUCCESS] info={info}'))
+			print(f'done = {done}')
+			# obs: type=<class 'torch.Tensor'> dim=torch.Size([223]), min=-28.50186538696289, max=39.67821502685547
+			# action: type=<class 'torch.Tensor'> dim=torch.Size([38]), min=-0.9133312106132507, max=0.9825810194015503
+			# reward: type=<class 'torch.Tensor'> dim=torch.Size([]), reward=0.004721595905721188
+			# info=defaultdict(<class 'float'>, {'success': 0.0}) (type=<class 'collections.defaultdict'>)
 			self._tds.append(self.to_td(obs, action, reward))
 
 			# Update agent
