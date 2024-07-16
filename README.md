@@ -73,12 +73,11 @@ See `docker/Dockerfile` for installation instructions if you do not already have
 
 ### Troubbleshooting
 
-''' 
+```
 pip3 install --upgrade charset-normalizer
 
 pip3 install casadi
-'''
-
+```
 
 ----
 
