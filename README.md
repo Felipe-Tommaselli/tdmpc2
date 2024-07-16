@@ -71,6 +71,15 @@ wget https://www.tdmpc2.com/files/mjkey.txt -O ~/.mujoco/mjkey.txt
 
 See `docker/Dockerfile` for installation instructions if you do not already have MuJoCo 2.1.0 installed. MyoSuite requires `gym==0.13.0` which is incompatible with Meta-World and ManiSkill2. Install separately with `pip install myosuite` if desired. Depending on your existing system packages, you may need to install other dependencies. See `docker/Dockerfile` for a list of recommended system packages.
 
+### Troubbleshooting
+
+''' 
+pip3 install --upgrade charset-normalizer
+
+pip3 install casadi
+'''
+
+
 ----
 
 ## Supported tasks
