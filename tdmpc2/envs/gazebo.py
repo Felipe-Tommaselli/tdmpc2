@@ -196,7 +196,7 @@ class GazeboEnv:
         #robot_state = [action[0], action[1]]
         vision_state = [self.last_heat_map[:]]
         #self.state = np.append(vision_state, robot_state)
-        self.state = np.array(vision_state)
+        self.state = np.array(vision_state.flatten())
         
         collision = self.observe_collision(self.dis_error, self.vel_x, vel_cmd.twist.linear.x, self.pitch, self.roll)
         self.reward = self.get_reward(self.dis_error, self.delta_x, collision, action)
