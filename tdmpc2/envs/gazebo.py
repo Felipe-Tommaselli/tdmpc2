@@ -94,7 +94,7 @@ class GazeboEnv:
         if launchfile.startswith("/"):
             fullpath = launchfile
         else:
-            fullpath = os.path.join(os.path.dirname(__file__), "assets", launchfile)
+            fullpath = os.path.join(os.path.dirname(__file__), "launchs", launchfile)
         if not path.exists(fullpath):
             raise IOError("File " + fullpath + " does not exist")
 
@@ -276,11 +276,7 @@ class GazeboEnv:
 
 ##############################################
 
-#! endpoint
 def make_env(cfg):
-    """
-    Adapted from https://github.com/facebookresearch/drqv2
-    """
     print('MAKE GAZEBO ENV')
     env = GazeboEnv("multi_robot_scenario.launch")
     # env = ActionDTypeWrapper(env, np.float32)
