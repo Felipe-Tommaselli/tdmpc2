@@ -28,7 +28,7 @@ def make_env(cfg):
 	try: # Dict
 		cfg.obs_shape = {k: v.shape for k, v in env.observation_space.spaces.items()}
 	except: # Box
-		cfg.obs_shape = {cfg.get('obs', 'state'): cfg.get("obs_shape")}
+		cfg.obs_shape = {cfg.get('obs', 'state'): [cfg.get("obs_shape")]}
 	cfg.action_dim = cfg.get("action_dim")
 	#TODO: think about this
 	cfg.episode_length = cfg.get("max_ep_steps") # env.max_episode_steps
