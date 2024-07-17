@@ -103,7 +103,6 @@ class OnlineTrainer(Trainer):
 			obs, reward, done, info = self.env.step(action)
 			if info['success'] != 0.0:
 				print(cf.bold_red(f'[SUCCESS] info={info}'))
-			print(f'done = {done}')
 			# obs: type=<class 'torch.Tensor'> dim=torch.Size([223]), min=-28.50186538696289, max=39.67821502685547
 			# action: type=<class 'torch.Tensor'> dim=torch.Size([38]), min=-0.9133312106132507, max=0.9825810194015503
 			# reward: type=<class 'torch.Tensor'> dim=torch.Size([]), reward=0.004721595905721188

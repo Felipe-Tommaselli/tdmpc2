@@ -92,7 +92,9 @@ class VideoRecorder:
 
 	def record(self, env):
 		if self.enabled:
-			self.frames.append(env.render())
+			#TODO: make this work with gazebo recording
+			# self.frames.append(env.render())
+			pass
 
 	def save(self, step, key='videos/eval_video'):
 		if self.enabled and len(self.frames) > 0:

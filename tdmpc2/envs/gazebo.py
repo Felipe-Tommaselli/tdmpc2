@@ -197,7 +197,11 @@ class GazeboEnv:
         #robot_state = [action[0], action[1]]
         vision_state = [self.last_heat_map[:]]
         #self.state = np.append(vision_state, robot_state)
-        self.state = np.array(vision_state.flatten())
+
+        if isinstance(vision_state, int):
+            self.state = np.array(vision_state[0])
+        else:
+            self.state = np.array(vision_state)
         
         collision = self.observe_collision(self.dis_error, self.vel_x, vel_cmd.twist.linear.x, self.pitch, self.roll)
         self.reward = self.get_reward(self.dis_error, self.delta_x, collision, action)
@@ -217,7 +221,6 @@ class GazeboEnv:
         done = self.done
         info = self.info
 
-        print(f'types: obs={type(obs)}, reward={type(reward)}, done={type(done)}, info={type(info)}')
         return obs, reward, done, info
 
 
@@ -248,7 +251,10 @@ class GazeboEnv:
         #robot_state = [0.0, 0.0]
         vision_state = [self.last_heat_map[:]]
         #self.state = np.append(vision_state, robot_state)
-        self.state = np.array(vision_state[0].flatten())
+        if isinstance(vision_state, int):
+            self.state = np.array(vision_state[0])
+        else:
+            self.state = np.array(vision_state)
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())
