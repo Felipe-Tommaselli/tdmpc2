@@ -77,7 +77,15 @@ See `docker/Dockerfile` for installation instructions if you do not already have
 pip3 install --upgrade charset-normalizer
 
 pip3 install casadi
+
+python3 train.py  2>&1 | grep -v "XML Attribute\[version\] in element\[sdf\] not defined in SDF, ignoring."
+
+export WANDB_API_KEY=
 ```
+
+Matching versions: 
+`numpy==1.23.5` with `conda install pytorch==1.12.1 torchvision==0.13.1 torchaudio==0.12.1 cudatoolkit=11.6 -c pytorch -c conda-forge`. 
+
 
 ----
 
