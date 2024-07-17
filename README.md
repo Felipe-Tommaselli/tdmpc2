@@ -80,7 +80,9 @@ pip3 install casadi
 
 python3 train.py  2>&1 | grep -v "XML Attribute\[version\] in element\[sdf\] not defined in SDF, ignoring."
 
-export WANDB_API_KEY=
+export WANDB_API_KEY="..."
+
+export LD_LIBRARY_PATH=/usr/local/cuda/lib64:$LD_LIBRARY_PATH
 ```
 
 Matching versions: 
