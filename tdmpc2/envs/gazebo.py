@@ -5,6 +5,7 @@ from os import path
 import numpy as np
 import rospy
 import colorful as cf 
+import torch
 
 from gazebo_msgs.msg import ModelState
 from geometry_msgs.msg import TwistStamped
@@ -247,7 +248,7 @@ class GazeboEnv:
         #robot_state = [0.0, 0.0]
         vision_state = [self.last_heat_map[:]]
         #self.state = np.append(vision_state, robot_state)
-        self.state = np.array(vision_state)
+        self.state = np.array(vision_state[0].flatten())
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())

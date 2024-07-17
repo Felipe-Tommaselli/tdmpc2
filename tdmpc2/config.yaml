@@ -62,7 +62,7 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: TDMPC2
+wandb_project: Cropfollow
 wandb_entity: f-tommaselli-USP - Universidade de São Paulo
 wandb_silent: false
 disable_wandb: false

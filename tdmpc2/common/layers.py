@@ -146,6 +146,7 @@ def enc(cfg, out={}):
 	"""
 	for k in cfg.obs_shape.keys():
 		if k == 'state':
+			print('layers.py')
 			print(f'cfg.obs_shape={cfg.obs_shape}\ncfg.task_dim={cfg.task_dim}\ncfg.enc_dim={cfg.enc_dim}\ncfg.latent_dim={cfg.latent_dim}\ncfg.num_enc_layers={cfg.num_enc_layers}')
 			out[k] = mlp(cfg.obs_shape[k][0] + cfg.task_dim, max(cfg.num_enc_layers-1, 1)*[cfg.enc_dim], cfg.latent_dim, act=SimNorm(cfg))
 		elif k == 'rgb':

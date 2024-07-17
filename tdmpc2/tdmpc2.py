@@ -17,7 +17,6 @@ class TDMPC2:
 	def __init__(self, cfg):
 		self.cfg = cfg
 		#TODO: check the action dim, might need to hard code it
-		print('>>> action dim: ', cfg.action_dim)
 		self.device = torch.device('cuda')
 		self.model = WorldModel(cfg).to(self.device)
 		self.optim = torch.optim.Adam([
