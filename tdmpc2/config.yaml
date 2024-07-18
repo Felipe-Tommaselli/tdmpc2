@@ -80,7 +80,7 @@ multitask: ???
 tasks: ???
 obs_shape: 13440
 action_dim: 2
-max_ep_steps: 10
+max_ep_steps: 50
 episode_length: ???
 obs_shapes: ???
 action_dims: ???

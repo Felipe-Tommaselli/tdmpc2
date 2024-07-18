@@ -7,6 +7,8 @@ import rospy
 import colorful as cf 
 import torch
 
+import gym
+
 from gazebo_msgs.msg import ModelState
 from geometry_msgs.msg import TwistStamped
 from nav_msgs.msg import Odometry
@@ -47,11 +49,22 @@ def normalize(input_image):
     return output
 
 
-class GazeboEnv:
+class GazeboEnv(gym.Env):
     """Superclass for all Gazebo environments."""
 
-    def __init__(self, launchfile):
+    def __init__(self, launchfile, cfg):
+        super(GazeboEnv, self).__init__()
         
+        self.cfg = cfg
+        self.obs_dim = cfg.get("obs_shape")
+        self.action_dim = cfg.get("action_dim")
+        self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
+        self.action_space = gym.spaces.Box(low=np.array([0.0, -1.0]), high=np.array([1.0, 1.0]), dtype=np.float32)
+        #self.reward_range = (-np.inf, np.inf)
+        #self.metadata = {'render.modes': ['human']}
+        #self.spec = None
+
+
         self.odom_x = 0
         self.odom_y = 0
         self.vel_x = 1
@@ -285,7 +298,7 @@ class GazeboEnv:
 
 def make_env(cfg):
     print('MAKE GAZEBO ENV')
-    env = GazeboEnv("multi_robot_scenario.launch")
+    env = GazeboEnv("multi_robot_scenario.launch", cfg)
     # env = ActionDTypeWrapper(env, np.float32)
     # env = ActionRepeatWrapper(env, 2)
     # env = action_scale.Wrapper(env, minimum=-1., maximum=1.)
