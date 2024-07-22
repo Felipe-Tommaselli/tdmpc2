@@ -14,6 +14,7 @@ from geometry_msgs.msg import TwistStamped
 from nav_msgs.msg import Odometry
 from std_srvs.srv import Empty
 from std_msgs.msg import Float32MultiArray
+from std_msgs.msg import String
 from scipy.special import softmax
 TIME_DELTA = 0.1
 
@@ -121,6 +122,7 @@ class GazeboEnv(gym.Env):
         self.set_state = rospy.Publisher(
             "gazebo/set_model_state", ModelState, queue_size=10
         )
+        self.collision_pub = rospy.Publisher("terrasentia/collision", String, queue_size=1)
         self.unpause = rospy.ServiceProxy("/gazebo/unpause_physics", Empty)
         self.pause = rospy.ServiceProxy("/gazebo/pause_physics", Empty)
         self.reset_proxy = rospy.ServiceProxy("/gazebo/reset_world", Empty)
@@ -171,9 +173,7 @@ class GazeboEnv(gym.Env):
         self.roll  = od_data.twist.twist.angular.x
 
     # Perform an action and read a new state
-    def step(self, action):
-        #TODO: get the current action pair format from the agent
-        
+    def step(self, action):        
         target = False
 
         # Publish the robot action
@@ -217,9 +217,12 @@ class GazeboEnv(gym.Env):
             self.state = np.array(vision_state)
         
         collision = self.observe_collision(self.dis_error, self.vel_x, vel_cmd.twist.linear.x, self.pitch, self.roll)
-        self.reward = self.get_reward(self.dis_error, self.delta_x, collision, action)
-        self.done = collision
+        self.reward = self.get_reward(self.dis_error, self.delta_x, collision['response'], action)
+        self.done = collision['response']
 
+        if collision['response'] != False:
+            self.collision_pub.publish(collision['type'])
+        
         if self.done == True:
             self.ll_odom_x = 0
 
@@ -277,12 +280,12 @@ class GazeboEnv(gym.Env):
     @staticmethod
     def observe_collision(distance_error, vel_x, vel_cmd, pitch, roll):
         if abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25:
-            return True
+            return {'response':True, 'type': 'stuck'}
         if abs(distance_error) > 0.2:
-            return True
+            return {'response':True, 'type': 'distance'}
         elif abs(pitch) > 0.01 or abs(roll) > 0.01:
-            return True
-        return False
+            return {'response':True, 'type': 'acrobatic'}
+        return {'response':False, 'type': None}
 
     @staticmethod
     def get_reward(distance_error, delta_x, collision, action):

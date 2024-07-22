@@ -112,7 +112,6 @@ def mlp(in_dim, mlp_dims, out_dim, act=None, dropout=0.):
 	Basic building block of TD-MPC2.
 	MLP with LayerNorm, Mish activations, and optionally dropout.
 	"""
-	print(f'in_dim={in_dim}, mlp_dims={mlp_dims}, out_dim={out_dim}')
 	if isinstance(mlp_dims, int):
 		mlp_dims = [mlp_dims]
 	dims = [in_dim] + mlp_dims + [out_dim]
@@ -146,8 +145,6 @@ def enc(cfg, out={}):
 	"""
 	for k in cfg.obs_shape.keys():
 		if k == 'state':
-			print('layers.py')
-			print(f'cfg.obs_shape={cfg.obs_shape}\ncfg.task_dim={cfg.task_dim}\ncfg.enc_dim={cfg.enc_dim}\ncfg.latent_dim={cfg.latent_dim}\ncfg.num_enc_layers={cfg.num_enc_layers}')
 			out[k] = mlp(cfg.obs_shape[k][0] + cfg.task_dim, max(cfg.num_enc_layers-1, 1)*[cfg.enc_dim], cfg.latent_dim, act=SimNorm(cfg))
 		elif k == 'rgb':
 			out[k] = conv(cfg.obs_shape[k], cfg.num_channels, act=SimNorm(cfg))
