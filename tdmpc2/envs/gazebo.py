@@ -17,10 +17,11 @@ from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from scipy.special import softmax
 TIME_DELTA = 0.1
+INIT_DELAY = 1.0 
 
 from collections import defaultdict # for info data
 
-def normalize(input_image):
+def normalize_image(input_image):
     #input is c,h,w which we change to w,h,c
     input_image = input_image.transpose((1,2,0))
 
@@ -49,6 +50,20 @@ def normalize(input_image):
 
     return output
 
+def normalize_actions(action):
+    min_linear = 0.1 
+    max_linear = 1.0
+    min_angular = -1.0
+    max_angular = 1.0
+
+    # norm (-1,1) to (0,1)
+    a_norm_linear = ((action[0] + 1)/2)
+    a_norm_angular = ((action[1] + 1)/2)
+
+    action[0] = a_norm_linear * (max_linear - min_linear) + min_linear
+    action[1] = a_norm_angular * (max_angular - min_angular) + min_angular    
+
+    return action
 
 class GazeboEnv(gym.Env):
     """Superclass for all Gazebo environments."""
@@ -60,7 +75,7 @@ class GazeboEnv(gym.Env):
         self.obs_dim = cfg.get("obs_shape")
         self.action_dim = cfg.get("action_dim")
         self.observation_space = gym.spaces.Box(low=0.0, high=1.0, shape=(self.obs_dim,), dtype=np.float32)
-        self.action_space = gym.spaces.Box(low=np.array([0.0, -1.0]), high=np.array([1.0, 1.0]), dtype=np.float32)
+        self.action_space = gym.spaces.Box(low=np.array([-1.0, -1.0]), high=np.array([1.0, 1.0]), dtype=np.float32)
         #self.reward_range = (-np.inf, np.inf)
         #self.metadata = {'render.modes': ['human']}
         #self.spec = None
@@ -117,7 +132,6 @@ class GazeboEnv(gym.Env):
         print("Gazebo launched!")
 
         # Set up the ROS publishers and subscribers
-        # self.vel_pub = rospy.Publisher("/r1/cmd_vel", Twist, queue_size=1)
         self.terra_vel_pub = rospy.Publisher("/terrasentia/cmd_vel", TwistStamped, queue_size=10)
         self.set_state = rospy.Publisher(
             "gazebo/set_model_state", ModelState, queue_size=10
@@ -160,7 +174,7 @@ class GazeboEnv(gym.Env):
         data[0] = softmax(data[0])
         data[1] = softmax(data[1])
         data[2] = softmax(data[2])
-        data = normalize(data)
+        data = normalize_image(data)
         self.last_heat_map = data
 
     def d_error_callback(self, dis_error):
@@ -176,6 +190,9 @@ class GazeboEnv(gym.Env):
     def step(self, action):        
         target = False
 
+        # normalize -1 <-> 1 to each action space
+        action = normalize_actions(action)
+
         # Publish the robot action
         vel_cmd = TwistStamped()
         vel_cmd.twist.linear.x = action[0]
@@ -189,8 +206,8 @@ class GazeboEnv(gym.Env):
         except (rospy.ServiceException) as e:
             print("/gazebo/unpause_physics service call failed")
 
-        # propagate state for TIME_DELTA seconds
-        time.sleep(TIME_DELTA)
+        # wait for the robot to be in the position
+        time.sleep(INIT_DELAY)
 
         rospy.wait_for_service("/gazebo/pause_physics")
         try:
@@ -207,7 +224,7 @@ class GazeboEnv(gym.Env):
         self.ll_odom_x = int_odom_x/10
 
 
-        #robot_state = [action[0], action[1]]
+        #robot_state = [action[0], action[1]] #TODO: remember to unclip 
         vision_state = [self.last_heat_map[:]]
         #self.state = np.append(vision_state, robot_state)
 
@@ -228,8 +245,6 @@ class GazeboEnv(gym.Env):
 
         #TODO: change info value when necessary 
         #self.info['success'] = 1.0 if self.odom_x > 1.0 else 0.0
-
-        #TODO: check obs values min and max
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())
@@ -281,7 +296,7 @@ class GazeboEnv(gym.Env):
     def observe_collision(distance_error, vel_x, vel_cmd, pitch, roll):
         if abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25:
             return {'response':True, 'type': 'stuck'}
-        if abs(distance_error) > 0.2:
+        if abs(distance_error) > 0.25:
             return {'response':True, 'type': 'distance'}
         elif abs(pitch) > 0.01 or abs(roll) > 0.01:
             return {'response':True, 'type': 'acrobatic'}
@@ -289,10 +304,7 @@ class GazeboEnv(gym.Env):
 
     @staticmethod
     def get_reward(distance_error, delta_x, collision, action):
-        # if delta_x <0:
-        #     delta_x=0
         if collision:
-            # self.ll_odom_x = 0.0
             return -100.0
         else:
             return action[0]/2 - abs(action[1]) + delta_x/10
