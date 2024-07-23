@@ -24,7 +24,7 @@ tau: 0.01
 discount_denom: 5
 discount_min: 0.95
 discount_max: 0.995
-buffer_size: 1_000
+buffer_size: 10_000
 exp_name: default
 data_dir: ???
 
@@ -62,7 +62,7 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: Cropfollow
+wandb_project: Cropfollow-train
 wandb_entity: f-tommaselli-USP - Universidade de São Paulo
 wandb_silent: false
 disable_wandb: false
