@@ -16,8 +16,8 @@ from std_srvs.srv import Empty
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from scipy.special import softmax
-TIME_DELTA = 0.1
-INIT_DELAY = 1.0 
+TIME_DELTA = 0.4
+INIT_DELAY = 0.1 
 
 from collections import defaultdict # for info data
 
@@ -53,8 +53,8 @@ def normalize_image(input_image):
 def normalize_actions(action):
     min_linear = 0.1 
     max_linear = 1.0
-    min_angular = -1.0
-    max_angular = 1.0
+    min_angular = -0.7
+    max_angular = 0.7
 
     # norm (-1,1) to (0,1)
     a_norm_linear = ((action[0] + 1)/2)
@@ -239,6 +239,9 @@ class GazeboEnv(gym.Env):
 
         if collision['response'] != False:
             self.collision_pub.publish(collision['type'])
+            vel_cmd.twist.linear.x = 0
+            vel_cmd.twist.angular.z = 0
+            self.terra_vel_pub.publish(vel_cmd)
         
         if self.done == True:
             self.ll_odom_x = 0
@@ -296,18 +299,26 @@ class GazeboEnv(gym.Env):
     def observe_collision(distance_error, vel_x, vel_cmd, pitch, roll):
         if abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25:
             return {'response':True, 'type': 'stuck'}
-        if abs(distance_error) > 0.25:
-            return {'response':True, 'type': 'distance'}
+        
+        if abs(distance_error) > 0.5:
+            if distance_error < 0:
+                return {'response':True, 'type': 'distance left'}
+            else:
+                return {'response':True, 'type': 'distance right'}
+        
         elif abs(pitch) > 0.01 or abs(roll) > 0.01:
             return {'response':True, 'type': 'acrobatic'}
+        
         return {'response':False, 'type': None}
 
     @staticmethod
     def get_reward(distance_error, delta_x, collision, action):
         if collision:
-            return -100.0
+            pass
+            #return -100.0
         else:
-            return action[0]/2 - abs(action[1]) + delta_x/10
+            pass 
+        return action[0]/2 - abs(action[1]) + delta_x/10
 
 ##############################################
 

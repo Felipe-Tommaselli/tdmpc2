@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 from termcolor import colored
 from omegaconf import OmegaConf
+import datetime 
 
 from common import TASK_SET
 
@@ -154,6 +155,7 @@ class Logger:
 		return self._model_dir
 
 	def save_agent(self, agent=None, identifier='final'):
+		identifier = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		if self._save_agent and agent:
 			fp = self._model_dir / f'{str(identifier)}.pt'
 			agent.save(fp)
