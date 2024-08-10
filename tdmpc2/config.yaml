@@ -7,11 +7,11 @@ obs: state
 
 # evaluation
 checkpoint: ???
-eval_episodes: 100
+eval_episodes: 10
 eval_freq: 5000
 
 # training
-steps: 100_000
+steps: 10_000
 batch_size: 64
 reward_coef: 0.1
 value_coef: 0.1
@@ -50,7 +50,7 @@ vmin: -10
 vmax: +10
 
 # architecture
-model_size: ???
+model_size: 48
 num_enc_layers: 2
 enc_dim: 256
 num_channels: 32

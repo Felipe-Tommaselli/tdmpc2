@@ -16,8 +16,8 @@ from std_srvs.srv import Empty
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from scipy.special import softmax
-TIME_DELTA = 0.4
-INIT_DELAY = 0.1 
+RESET_DELAY = 0.1
+STEP_DELAY = 0.1 
 
 from collections import defaultdict # for info data
 
@@ -53,8 +53,8 @@ def normalize_image(input_image):
 def normalize_actions(action):
     min_linear = 0.1 
     max_linear = 1.0
-    min_angular = -0.7
-    max_angular = 0.7
+    min_angular = -0.9
+    max_angular = 0.9
 
     # norm (-1,1) to (0,1)
     a_norm_linear = ((action[0] + 1)/2)
@@ -207,7 +207,7 @@ class GazeboEnv(gym.Env):
             print("/gazebo/unpause_physics service call failed")
 
         # wait for the robot to be in the position
-        time.sleep(INIT_DELAY)
+        time.sleep(STEP_DELAY)
 
         rospy.wait_for_service("/gazebo/pause_physics")
         try:
@@ -274,7 +274,7 @@ class GazeboEnv(gym.Env):
         except (rospy.ServiceException) as e:
             print("/gazebo/unpause_physics service call failed")
 
-        time.sleep(TIME_DELTA)
+        time.sleep(RESET_DELAY)
 
         rospy.wait_for_service("/gazebo/pause_physics")
         try:
