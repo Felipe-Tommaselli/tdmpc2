@@ -154,7 +154,7 @@ class Logger:
 	def model_dir(self):
 		return self._model_dir
 
-	def save_agent(self, agent=None, identifier='final'):
+	def save_agent(self, agent=None):
 		identifier = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		if self._save_agent and agent:
 			fp = self._model_dir / f'{str(identifier)}.pt'
