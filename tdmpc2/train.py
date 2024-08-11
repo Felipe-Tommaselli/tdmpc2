@@ -46,11 +46,17 @@ def train(cfg: dict):
 	set_seed(cfg.seed)
 	print(colored('Work dir:', 'yellow', attrs=['bold']), cfg.work_dir)
 
+	env = make_env(cfg)
+	agent = TDMPC2(cfg)
+	assert os.path.exists(cfg.checkpoint), f'Checkpoint {cfg.checkpoint} not found! Must be a valid filepath.'
+	print(colored(f'Checkpoint: {cfg.checkpoint}', 'blue', attrs=['bold']))
+	agent.load(cfg.checkpoint)
+
 	trainer_cls = OfflineTrainer if cfg.multitask else OnlineTrainer
 	trainer = trainer_cls(
 		cfg=cfg,
-		env=make_env(cfg),
-		agent=TDMPC2(cfg),
+		env=env,
+		agent=agent,
 		buffer=Buffer(cfg),
 		logger=Logger(cfg),
 	)
