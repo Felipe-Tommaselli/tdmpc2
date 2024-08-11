@@ -6,6 +6,7 @@ from common import math
 from common.scale import RunningScale
 from common.world_model import WorldModel
 
+import colorful as cf
 
 class TDMPC2:
 	"""
@@ -58,6 +59,7 @@ class TDMPC2:
 		"""
 		torch.save({"model": self.model.state_dict()}, fp)
 
+
 	def load(self, fp):
 		"""
 		Load a saved state dict from filepath (or dictionary) into current agent.
@@ -66,7 +68,25 @@ class TDMPC2:
 			fp (str or dict): Filepath or state dict to load.
 		"""
 		state_dict = fp if isinstance(fp, dict) else torch.load(fp)
-		self.model.load_state_dict(state_dict["model"])
+
+		# Initialize a new state dict that will contain only matching keys
+		new_state_dict = {}
+		total_keys = len(state_dict["model"])
+		matched_keys = 0
+
+		# Loop through the pre-trained state_dict and current model's state_dict
+		for key in state_dict["model"]:
+			if key in self.model.state_dict():
+				# Check if the shape of the tensor matches
+				if state_dict["model"][key].shape == self.model.state_dict()[key].shape:
+					new_state_dict[key] = state_dict["model"][key]
+					matched_keys += 1
+
+		# Load the matched state dict into the model
+		self.model.load_state_dict(new_state_dict, strict=False)
+
+		print(cf.bold_green(f"Matched {matched_keys} out of {total_keys} keys for the checkpoint"))
+
 
 	@torch.no_grad()
 	def act(self, obs, t0=False, eval_mode=False, task=None):
