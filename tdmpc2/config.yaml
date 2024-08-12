@@ -23,8 +23,8 @@ grad_clip_norm: 20
 tau: 0.01
 discount_denom: 5
 discount_min: 0.95
-discount_max: 0.995
-buffer_size: 1_000_000
+discount_max: 0.995 
+buffer_size: 1_000_000 # check if buffer size affects training steps
 exp_name: default
 data_dir: ???
 

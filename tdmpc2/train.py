@@ -50,7 +50,7 @@ def train(cfg: dict):
 	agent = TDMPC2(cfg)
 	assert os.path.exists(cfg.checkpoint), f'Checkpoint {cfg.checkpoint} not found! Must be a valid filepath.'
 	print(colored(f'Checkpoint: {cfg.checkpoint}', 'blue', attrs=['bold']))
-	agent.load(cfg.checkpoint)
+	#agent.load(cfg.checkpoint) #! checking
 
 	trainer_cls = OfflineTrainer if cfg.multitask else OnlineTrainer
 	trainer = trainer_cls(

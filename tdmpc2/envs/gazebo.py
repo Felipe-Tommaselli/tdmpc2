@@ -16,8 +16,8 @@ from std_srvs.srv import Empty
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from scipy.special import softmax
-RESET_DELAY = 0.1
-STEP_DELAY = 0.1 
+RESET_DELAY = 0.33
+STEP_DELAY = 0.33
 
 from collections import defaultdict # for info data
 

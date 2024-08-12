@@ -7,6 +7,8 @@ from termcolor import colored
 from omegaconf import OmegaConf
 import datetime 
 
+import colorful as cf
+
 from common import TASK_SET
 
 
@@ -72,6 +74,7 @@ def cfg_to_group(cfg, return_list=False):
 	Optionally returns group name as list.
 	"""
 	lst = [cfg.task, re.sub("[^0-9a-zA-Z]+", "-", cfg.exp_name)]
+	print(cf.bold_red('1: lst if return_list else "-".join(lst):', lst if return_list else "-".join(lst)))
 	return lst if return_list else "-".join(lst)
 
 
@@ -158,6 +161,7 @@ class Logger:
 		identifier = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 		if self._save_agent and agent:
 			fp = self._model_dir / f'{str(identifier)}.pt'
+			print(cf.bold_red(f'Saving model to {fp}'))
 			agent.save(fp)
 			if self._wandb:
 				artifact = self._wandb.Artifact(
