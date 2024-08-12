@@ -11,7 +11,7 @@ eval_episodes: 10
 eval_freq: 5000
 
 # training
-steps: 10_000
+steps: 200_000
 batch_size: 64
 reward_coef: 0.1
 value_coef: 0.1
@@ -62,7 +62,7 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: Cropfollow
+wandb_project: Cropfollow-train
 wandb_entity: f-tommaselli-USP - Universidade de São Paulo
 wandb_silent: false
 disable_wandb: false

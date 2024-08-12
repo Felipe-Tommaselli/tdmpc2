@@ -16,6 +16,9 @@ from std_srvs.srv import Empty
 from std_msgs.msg import Float32MultiArray
 from std_msgs.msg import String
 from scipy.special import softmax
+
+from sensor_msgs.msg import LaserScan
+
 RESET_DELAY = 0.33
 STEP_DELAY = 0.33
 
@@ -160,6 +163,18 @@ class GazeboEnv(gym.Env):
         self.d_error=rospy.Subscriber(
             "/terrasentia/distance_error", Float32MultiArray, self.d_error_callback, queue_size=1
         )
+
+        self.scan = np.zeros(1081)
+        self.scan_sub = rospy.Subscriber(
+            "/terrasentia/scan", Float32MultiArray, self.scan_callback, queue_size=2**28
+        )
+
+    
+    def scan_callback(self, data):
+        data_processed = [10.0 if (value == 'inf' or value == 'infinity') else value for value in data.ranges]
+        self.scan = np.array(data_processed)
+        print(f'lens: scan={len(self.scan)}, data_processed={len(data_processed)}, data={len(data.ranges)}')
+        
 
     def keypoints_callback(self, keypoints_data):
         keypoints = keypoints_data.data
