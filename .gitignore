@@ -131,3 +131,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 checkpoints/mt80-48M.pt
+checkpoints/mt30-48M.pt

@@ -56,7 +56,7 @@ def evaluate(cfg: dict):
 	# Load agent
 	agent = TDMPC2(cfg)
 	assert os.path.exists(cfg.checkpoint), f'Checkpoint {cfg.checkpoint} not found! Must be a valid filepath.'
-	agent.load(cfg.checkpoint)
+	agent.load(cfg.checkpoint) #! checking
 	
 	# Evaluate
 	if cfg.multitask:

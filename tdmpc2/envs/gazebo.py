@@ -165,13 +165,10 @@ class GazeboEnv(gym.Env):
             "/terrasentia/distance_error", Float32MultiArray, self.d_error_callback, queue_size=1
         )
 
-        #TODO: debug scan error:
-        # [ERROR] [1723491838.643326690, 0.001000000]: Client [/gym_273175_1723491816928] wants topic /terrasentia/scan to have datatype/md5sum [std_msgs/Float32MultiArray/6a40e0ffa6a17a503ac3f8616991b1f6], but our version has [sensor_msgs/LaserScan/90c7ef2dc6895d81024acba2ac42f369]. Dropping connection.
-
-        self.scan = np.zeros(1081)
-        self.scan_sub = rospy.Subscriber(
-            "/terrasentia/scan", LaserScan, self.scan_callback, queue_size=2**28
-        )
+        # self.scan = np.zeros(1081)
+        # self.scan_sub = rospy.Subscriber(
+        #     "/terrasentia/scan", LaserScan, self.scan_callback, queue_size=2**28
+        # )
 
     
     def scan_callback(self, data):
@@ -320,7 +317,7 @@ class GazeboEnv(gym.Env):
 
     @staticmethod
     def observe_collision(distance_error, vel_x, vel_cmd, pitch, roll):
-        if abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25:
+        if (abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25) or abs(vel_x) < 0.05:
             return {'response':True, 'type': 'stuck'}
         
         if abs(distance_error) > 0.5:
