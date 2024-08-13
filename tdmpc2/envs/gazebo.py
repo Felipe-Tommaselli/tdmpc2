@@ -100,8 +100,8 @@ class GazeboEnv(gym.Env):
         self.delta_x = 0.0
 
         self.last_heat_map = np.ones((3, 56, 80))
-        #self.state = np.zeros((3, 56, 80))
-        self.state = np.zeros(1081)
+        self.state = np.zeros((3, 56, 80))
+        #self.state = np.zeros(1081)
         self.reward = 0
         self.done = False 
         self.info = defaultdict(float, {'success': 0.0})
@@ -242,19 +242,17 @@ class GazeboEnv(gym.Env):
         self.ll_odom_x = int_odom_x/10
 
 
-        ##robot_state = [action[0], action[1]] #TODO: remember to unclip 
-        #vision_state = [self.last_heat_map[:]]
-        ## self.state = np.append(vision_state, robot_state)
+        #robot_state = [action[0], action[1]] #TODO: remember to unclip 
+        vision_state = [self.last_heat_map[:]]
+        # self.state = np.append(vision_state, robot_state)
 
 
-        # if isinstance(vision_state, int):
-        #     self.state = np.array(vision_state[0])
-        # else:
-        #     self.state = np.array(vision_state)
+        if isinstance(vision_state, int):
+            self.state = np.array(vision_state[0])
+        else:
+            self.state = np.array(vision_state)
         
-        self.state = self.scan
-
-        print(f'step state: {self.state}')
+        # self.state = self.scan
 
         collision = self.observe_collision(self.dis_error, self.vel_x, vel_cmd.twist.linear.x, self.pitch, self.roll)
         self.reward = self.get_reward(self.dis_error, self.delta_x, collision['response'], action)
@@ -277,8 +275,6 @@ class GazeboEnv(gym.Env):
         reward = self.reward if isinstance(self.reward, torch.Tensor) else torch.tensor(self.reward)
         done = self.done
         info = self.info
-
-        print(f'step obs: {obs}')
 
         return obs, reward, done, info
 
@@ -307,22 +303,19 @@ class GazeboEnv(gym.Env):
         except (rospy.ServiceException) as e:
             print("/gazebo/pause_physics service call failed")
         
-        # #robot_state = [0.0, 0.0]
-        # vision_state = [self.last_heat_map[:]]
-        # #self.state = np.append(vision_state, robot_state)
-        # if isinstance(vision_state, int):
-        #     self.state = np.array(vision_state[0])
-        # else:
-        #     self.state = np.array(vision_state)
+        #robot_state = [0.0, 0.0]
+        vision_state = [self.last_heat_map[:]]
+        #self.state = np.append(vision_state, robot_state)
+        if isinstance(vision_state, int):
+            self.state = np.array(vision_state[0])
+        else:
+            self.state = np.array(vision_state)
 
-        self.state = self.scan
-
-        print(f'reset state: {self.state}')
+        # self.state = self.scan
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())
         
-        print(f'reset obs: {obs}')
         return obs
 
     @staticmethod
