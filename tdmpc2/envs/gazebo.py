@@ -100,7 +100,8 @@ class GazeboEnv(gym.Env):
         self.delta_x = 0.0
 
         self.last_heat_map = np.ones((3, 56, 80))
-        self.state = np.zeros((3, 56, 80))
+        #self.state = np.zeros((3, 56, 80))
+        self.state = np.zeros(1081)
         self.reward = 0
         self.done = False 
         self.info = defaultdict(float, {'success': 0.0})
@@ -164,17 +165,19 @@ class GazeboEnv(gym.Env):
             "/terrasentia/distance_error", Float32MultiArray, self.d_error_callback, queue_size=1
         )
 
+        #TODO: debug scan error:
+        # [ERROR] [1723491838.643326690, 0.001000000]: Client [/gym_273175_1723491816928] wants topic /terrasentia/scan to have datatype/md5sum [std_msgs/Float32MultiArray/6a40e0ffa6a17a503ac3f8616991b1f6], but our version has [sensor_msgs/LaserScan/90c7ef2dc6895d81024acba2ac42f369]. Dropping connection.
+
         self.scan = np.zeros(1081)
         self.scan_sub = rospy.Subscriber(
-            "/terrasentia/scan", Float32MultiArray, self.scan_callback, queue_size=2**28
+            "/terrasentia/scan", LaserScan, self.scan_callback, queue_size=2**28
         )
 
     
     def scan_callback(self, data):
         data_processed = [10.0 if (value == 'inf' or value == 'infinity') else value for value in data.ranges]
-        self.scan = np.array(data_processed)
-        print(f'lens: scan={len(self.scan)}, data_processed={len(data_processed)}, data={len(data.ranges)}')
-        
+        self.scan = np.array(data_processed)  
+        print(f'scan callback: {self.scan}')      
 
     def keypoints_callback(self, keypoints_data):
         keypoints = keypoints_data.data
@@ -239,15 +242,20 @@ class GazeboEnv(gym.Env):
         self.ll_odom_x = int_odom_x/10
 
 
-        #robot_state = [action[0], action[1]] #TODO: remember to unclip 
-        vision_state = [self.last_heat_map[:]]
-        #self.state = np.append(vision_state, robot_state)
+        ##robot_state = [action[0], action[1]] #TODO: remember to unclip 
+        #vision_state = [self.last_heat_map[:]]
+        ## self.state = np.append(vision_state, robot_state)
 
-        if isinstance(vision_state, int):
-            self.state = np.array(vision_state[0])
-        else:
-            self.state = np.array(vision_state)
+
+        # if isinstance(vision_state, int):
+        #     self.state = np.array(vision_state[0])
+        # else:
+        #     self.state = np.array(vision_state)
         
+        self.state = self.scan
+
+        print(f'step state: {self.state}')
+
         collision = self.observe_collision(self.dis_error, self.vel_x, vel_cmd.twist.linear.x, self.pitch, self.roll)
         self.reward = self.get_reward(self.dis_error, self.delta_x, collision['response'], action)
         self.done = collision['response']
@@ -269,6 +277,8 @@ class GazeboEnv(gym.Env):
         reward = self.reward if isinstance(self.reward, torch.Tensor) else torch.tensor(self.reward)
         done = self.done
         info = self.info
+
+        print(f'step obs: {obs}')
 
         return obs, reward, done, info
 
@@ -297,17 +307,22 @@ class GazeboEnv(gym.Env):
         except (rospy.ServiceException) as e:
             print("/gazebo/pause_physics service call failed")
         
-        #robot_state = [0.0, 0.0]
-        vision_state = [self.last_heat_map[:]]
-        #self.state = np.append(vision_state, robot_state)
-        if isinstance(vision_state, int):
-            self.state = np.array(vision_state[0])
-        else:
-            self.state = np.array(vision_state)
+        # #robot_state = [0.0, 0.0]
+        # vision_state = [self.last_heat_map[:]]
+        # #self.state = np.append(vision_state, robot_state)
+        # if isinstance(vision_state, int):
+        #     self.state = np.array(vision_state[0])
+        # else:
+        #     self.state = np.array(vision_state)
+
+        self.state = self.scan
+
+        print(f'reset state: {self.state}')
 
         #* -------- ENVIROMENT -------- 
         obs = torch.tensor(self.state.flatten())
         
+        print(f'reset obs: {obs}')
         return obs
 
     @staticmethod
