@@ -118,6 +118,12 @@ class OnlineTrainer(Trainer):
 					_train_metrics = self.agent.update(self.buffer)
 				train_metrics.update(_train_metrics)
 
+			#TODO: test this
+			if self._step == np.ceil(self.cfg.steps//2):
+				self.logger.save_model_backup(self.agent, '-mid')
+			elif self._step == np.ceil(3*self.cfg.steps//4):
+				self.logger.save_model_backup(self.agent, '-3qtr')
+
 			self._step += 1
 	
 		self.logger.finish(self.agent)

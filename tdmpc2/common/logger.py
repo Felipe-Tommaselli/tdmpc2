@@ -119,6 +119,11 @@ class Logger:
 		self._group = cfg_to_group(cfg)
 		self._seed = cfg.seed
 		self._eval = []
+		
+		#TODO: test this
+		self.identifier = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+		self.train_mode = [True if 'train' in cfg.wandb_project else False][0]
+
 		print_run(cfg)
 		self.project = cfg.get("wandb_project", "none")
 		self.entity = cfg.get("wandb_entity", "none")
@@ -157,15 +162,20 @@ class Logger:
 	def model_dir(self):
 		return self._model_dir
 
+	def save_model_backup(self, agent=None, stage=None):
+		if self._save_agent and agent and self.train_mode:
+			fp = self._model_dir / f'{str(self.identifier) + str(stage)}.pt'
+			print(cf.bold_red(f'Saving model to {fp}'))
+			agent.save(fp)
+
 	def save_agent(self, agent=None):
-		identifier = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-		if self._save_agent and agent:
-			fp = self._model_dir / f'{str(identifier)}.pt'
+		if self._save_agent and agent and self.train_mode:
+			fp = self._model_dir / f'{str(self.identifier)}.pt'
 			print(cf.bold_red(f'Saving model to {fp}'))
 			agent.save(fp)
 			if self._wandb:
 				artifact = self._wandb.Artifact(
-					self._group + '-' + str(self._seed) + '-' + str(identifier),
+					self._group + '-' + str(self._seed) + str(self.identifier) + '-' ,
 					type='model',
 				)
 				artifact.add_file(fp)
