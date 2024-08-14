@@ -213,7 +213,6 @@ class GazeboEnv(gym.Env):
         vel_cmd.twist.linear.x = action[0]
         vel_cmd.twist.angular.z = action[1]
         self.terra_vel_pub.publish(vel_cmd)
-        # self.publish_markers(action)
 
         rospy.wait_for_service("/gazebo/unpause_physics")
         try:
@@ -317,7 +316,7 @@ class GazeboEnv(gym.Env):
 
     @staticmethod
     def observe_collision(distance_error, vel_x, vel_cmd, pitch, roll):
-        if (abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25) or abs(vel_x) < 0.05:
+        if (abs(vel_x) < 0.15 and abs(vel_cmd) > 0.25): # or abs(vel_x) < 0.05:
             return {'response':True, 'type': 'stuck'}
         
         if abs(distance_error) > 0.5:
