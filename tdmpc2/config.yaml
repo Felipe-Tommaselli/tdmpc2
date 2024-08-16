@@ -63,7 +63,7 @@ dropout: 0.01
 simnorm_dim: 8
 
 # logging
-wandb_project: Cropfollow-train
+wandb_project: Cropfollow
 wandb_entity: f-tommaselli-USP - Universidade de São Paulo
 wandb_silent: false
 disable_wandb: false
