@@ -6,13 +6,13 @@ task: cropfollow
 obs: state
 
 # evaluation
-checkpoint: /ros_ws/tdmpc2/checkpoints/mt80-48M.pt
+checkpoint: ??? #ros_ws/tdmpc2/checkpoints/mt80-48M.pt
 #checkpoint: /ros_ws/tdmpc2/tdmpc2/logs/cropfollow/1/default/models/2024-08-12_13-59-12.pt
 eval_episodes: 10
 eval_freq: 5000
 
 # training
-steps: 80_000
+steps: 30_000
 batch_size: 64
 reward_coef: 0.1
 value_coef: 0.1
@@ -51,12 +51,12 @@ vmin: -10
 vmax: +10
 
 # architecture
-model_size: 48
-num_enc_layers: 4
-enc_dim: 1792
+model_size: 5
+num_enc_layers: 2
+enc_dim: 256
 num_channels: 32
-mlp_dim: 1792
-latent_dim: 768
+mlp_dim: 512
+latent_dim: 512
 task_dim: 96
 num_q: 5
 dropout: 0.01
