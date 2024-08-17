@@ -74,7 +74,6 @@ def cfg_to_group(cfg, return_list=False):
 	Optionally returns group name as list.
 	"""
 	lst = [cfg.task, re.sub("[^0-9a-zA-Z]+", "-", cfg.exp_name)]
-	print(cf.bold_red('1: lst if return_list else "-".join(lst):', lst if return_list else "-".join(lst)))
 	return lst if return_list else "-".join(lst)
 
 
@@ -170,7 +169,7 @@ class Logger:
 
 	def save_agent(self, agent=None):
 		if self._save_agent and agent and self.train_mode:
-			fp = self._model_dir / f'{str(self.identifier)}.pt'
+			fp = self._model_dir / f'{str(self.identifier) + "-final"}.pt'
 			print(cf.bold_red(f'Saving model to {fp}'))
 			agent.save(fp)
 			if self._wandb:
